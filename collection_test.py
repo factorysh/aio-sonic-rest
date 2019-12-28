@@ -1,15 +1,13 @@
 import json
-from collection import CollectionWriter, CollectionReader
+from collection import CollectionSerializer, CollectionReader
 
 
 
 def test_Collection():
-    c = CollectionWriter("data_test")
-    c.mkdir()
-    c.write(json.dumps(dict(name="Pépé", age=42)).encode("utf8"))
-    c.write(json.dumps(dict(name="Bob", age=12)).encode("utf8"))
-    c.close()
+    with CollectionSerializer("data_test") as c:
+        c.mkdir()
+        c.append(dict(name="Pépé", age=42))
+        c.append(dict(name="Bob", age=12))
 
-    r = CollectionReader("data_test")
-    assert json.loads(r[1])["name"] == "Bob"
-    r.close()
+    with CollectionReader("data_test") as r:
+        assert json.loads(r[1])["name"] == "Bob"

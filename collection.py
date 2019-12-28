@@ -1,5 +1,6 @@
 from pathlib import Path
 import struct
+import json
 from mmap import mmap
 
 
@@ -24,6 +25,12 @@ class CollectionWriter:
             self._idx_w = (Path(self.path) / "index").open('wb')
         return self._idx_w
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.close()
+
     def close(self):
         if self._data_w is not None:
             self._data_w.close()
@@ -36,6 +43,18 @@ class CollectionWriter:
         self._poz += len(raw)
 
 
+class CollectionSerializer(CollectionWriter):
+
+    def serialize(self, data):
+        return json.dumps(data)
+
+    def append(self, data):
+        raw = self.serialize(data)
+        if type(raw) == str:
+            raw = raw.encode("utf8")
+        self.write(raw)
+
+
 class CollectionReader:
     def __init__(self, path):
         self._len = (Path(path) / "index").stat().st_size / 8
@@ -43,6 +62,12 @@ class CollectionReader:
         self._idx = mmap(self._idx_o.fileno(), 0)
         self._data_o = open(Path(path) / "data", "r+b")
         self._data = mmap(self._data_o.fileno(), 0)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.close()
 
     def close(self):
         self._idx_o.close()
