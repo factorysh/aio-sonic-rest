@@ -1,3 +1,7 @@
 # sync client
 sonic-client
 # async client
+asonic
+
+aiohttp[speedups]
+pytest-aiohttp
