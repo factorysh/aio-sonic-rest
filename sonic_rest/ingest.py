@@ -3,11 +3,13 @@ Ingest stuff to sonic daemon.
 
 It ingests an iterator of dictionnaries, stores some values, index others values.
 """
-
+import re
 
 from collection import CollectionSerializer
 
 from sonic import IngestClient, ControlClient
+
+NEWLINE = re.compile(r"\s+", re.MULTILINE)
 
 
 class Ingestor:
@@ -44,7 +46,9 @@ class Ingestor:
                     content = document.get(k)
                     if content is not None:
                         try:
-                            ingestctl.push(self.site, k, str(n), content, self.lang)
+                            ingestctl.push(self.site, k, str(n),
+                                           NEWLINE.sub(" ", content),
+                                           self.lang)
                         except Exception as e:
                             print(e, document)
             self.collection.close()
