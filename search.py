@@ -37,7 +37,7 @@ async def suggest(request):
     r = await request.app["sonic"].suggest(
         request.app["site"], request.query.get("bucket", "body"), s, 5
     )
-    return web.json_response(r)
+    return web.json_response([j.decode("utf8") for j in r])
 
 
 async def Search(
