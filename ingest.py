@@ -9,8 +9,14 @@ class Ingestor:
     site = "site"
     lang = "fra"
 
-    def __init__(self, address="127.0.0.1", port=1491,
-                 password=None, path="./data/kv", mkdir=True):
+    def __init__(
+        self,
+        address="127.0.0.1",
+        port=1491,
+        password=None,
+        path="./data/kv",
+        mkdir=True,
+    ):
         self.address = address
         self.port = port
         self.password = password
@@ -39,4 +45,3 @@ class Ingestor:
         with ControlClient(self.address, self.port, self.password) as controlcl:
             assert controlcl.ping()
             controlcl.trigger("consolidate")
-

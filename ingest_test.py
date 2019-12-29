@@ -10,5 +10,5 @@ def test_ingest():
     i.ingest(documents)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test_ingest()

@@ -2,7 +2,6 @@ import json
 from collection import CollectionSerializer, CollectionReader
 
 
-
 def test_Collection():
     with CollectionSerializer("data_test") as c:
         c.mkdir()

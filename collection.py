@@ -17,12 +17,12 @@ class CollectionWriter:
 
     def data_w(self):
         if self._data_w is None:
-            self._data_w = (Path(self.path) / "data").open('wb')
+            self._data_w = (Path(self.path) / "data").open("wb")
         return self._data_w
 
     def idx_w(self):
         if self._idx_w is None:
-            self._idx_w = (Path(self.path) / "index").open('wb')
+            self._idx_w = (Path(self.path) / "index").open("wb")
         return self._idx_w
 
     def __enter__(self):
@@ -39,12 +39,11 @@ class CollectionWriter:
 
     def write(self, raw: bytes):
         self.data_w().write(raw)
-        self.idx_w().write(struct.pack("!II", self._poz, self._poz+len(raw)))
+        self.idx_w().write(struct.pack("!II", self._poz, self._poz + len(raw)))
         self._poz += len(raw)
 
 
 class CollectionSerializer(CollectionWriter):
-
     def serialize(self, data):
         return json.dumps(data)
 
@@ -83,5 +82,5 @@ class CollectionReader:
             raise IndexError()
         if index < 0:
             index = self._len - index
-        start, end = struct.unpack("!II", self._idx[index*8:index*8+8])
+        start, end = struct.unpack("!II", self._idx[index * 8 : index * 8 + 8])
         return self._data[start:end]
