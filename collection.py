@@ -1,3 +1,16 @@
+"""
+Ordered collection of bytes for write once, read many, from any number of process.
+It uses two files and mmap.
+
+"data" file is the concatenation of values (some bytes).
+
+"index" file is an array of positions, start/end, encoded as unsigned int,
+in big indian.
+
+CollectionSerializer is an helper, it stores jsoned value.
+"""
+
+
 from pathlib import Path
 import struct
 import json

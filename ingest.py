@@ -1,3 +1,10 @@
+"""
+Ingest stuff to sonic daemon.
+
+It ingests an iterator of dictionnaries, stores some values, index others values.
+"""
+
+
 from collection import CollectionSerializer
 
 from sonic import IngestClient, ControlClient

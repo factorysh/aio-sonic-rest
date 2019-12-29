@@ -1,3 +1,9 @@
+"""
+REST API for Sonic, using an aiohttp application.
+
+Sonic stores nothing, search returns just a collection of id.
+Query return stored documents, already serialized.
+"""
 import asyncio
 
 from collection import CollectionReader
