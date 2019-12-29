@@ -6,12 +6,11 @@ Query return stored documents, already serialized.
 """
 import asyncio
 
-from collection import CollectionReader
-
-
 from aiohttp import web
 from asonic import Client
 from asonic.enums import Channels
+
+from collection import CollectionReader
 
 
 async def query(request):
@@ -54,7 +53,3 @@ async def Search(
     app["site"] = site
     app["collection"] = CollectionReader(store)
     app.add_routes([web.get("/query", query), web.get("/suggest", suggest)])
-
-
-if __name__ == "__main__":
-    app = web.Application()
