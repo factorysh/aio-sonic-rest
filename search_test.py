@@ -1,10 +1,18 @@
-from search import Search
+import pytest
 from aiohttp import web
 
+from search import Search
 
-async def test_query(aiohttp_client, loop):
+
+@pytest.fixture
+async def app():
     app = web.Application()
-    await Search(app, password="iuNg5Ri6daik2fe2Phoo6aig")
+    await Search(app, password="iuNg5Ri6daik2fe2Phoo6aig",
+                 store="./data/store/collection")
+    return app
+
+
+async def test_query(aiohttp_client, app, loop):
     client = await aiohttp_client(app)
     resp = await client.get("/query?q=carotte")
     assert resp.status == 200
@@ -13,9 +21,7 @@ async def test_query(aiohttp_client, loop):
     assert len(j) == 1
 
 
-async def test_suggest(aiohttp_client, loop):
-    app = web.Application()
-    await Search(app, password="iuNg5Ri6daik2fe2Phoo6aig")
+async def test_suggest(aiohttp_client, app, loop):
     client = await aiohttp_client(app)
     resp = await client.get("/suggest?s=car")
     assert resp.status == 200

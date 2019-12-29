@@ -6,7 +6,7 @@ def test_ingest():
         dict(name="bob", body="Il fait beau et chaud."),
         dict(name="alice", body="Elle mange des carottes."),
     ]
-    i = Ingestor(password="iuNg5Ri6daik2fe2Phoo6aig")
+    i = Ingestor(password="iuNg5Ri6daik2fe2Phoo6aig", path="./data/store/collection")
     i.ingest(documents)
 
 
