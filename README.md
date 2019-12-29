@@ -13,6 +13,11 @@ Run tests
 
     pytest
 
+
+Or, simpler:
+
+    make test
+
 Licence
 -------
 
