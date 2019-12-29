@@ -1,5 +1,5 @@
 __pycache__/
-data*/
+data/
 venv/
 aio_simple_search.egg-info/
 build/
