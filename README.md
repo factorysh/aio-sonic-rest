@@ -1,6 +1,7 @@
-AIO Simple Search
-=================
+AIO Sonic REST
+==============
 
+REST API for [Sonic](https://github.com/valeriansaliou/sonic) daemon.
 
 Tests
 -----
