@@ -8,7 +8,8 @@ import re
 
 from .collection import CollectionSerializer
 
-from sonic import IngestClient, ControlClient, quote_text
+from sonic import IngestClient, ControlClient
+from sonic.client import quote_text
 
 
 class Ingestor:
