@@ -1,5 +1,5 @@
 import json
-from collection import CollectionSerializer, CollectionReader
+from .collection import CollectionSerializer, CollectionReader
 
 
 def test_Collection():

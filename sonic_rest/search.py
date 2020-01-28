@@ -10,7 +10,7 @@ from aiohttp import web
 from asonic import Client
 from asonic.enums import Channels
 
-from collection import CollectionReader
+from .collection import CollectionReader
 
 
 async def query(request):

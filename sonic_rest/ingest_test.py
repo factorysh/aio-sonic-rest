@@ -1,4 +1,4 @@
-from ingest import Ingestor
+from .ingest import Ingestor
 
 
 def test_ingest():
