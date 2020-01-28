@@ -21,7 +21,10 @@ down:
 ps:
 	docker-compose ps
 
-test: install sonic
+test: install
+	make down
+	rm -rf data
+	make sonic
 	venv/bin/pytest
 
 clean:
