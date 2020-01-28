@@ -8,9 +8,7 @@ import re
 
 from .collection import CollectionSerializer
 
-from sonic import IngestClient, ControlClient
-
-NEWLINE = re.compile(r"\s+", re.MULTILINE)
+from sonic import IngestClient, ControlClient, quote_text
 
 
 class Ingestor:
@@ -46,11 +44,10 @@ class Ingestor:
                 for k in self.indexed:
                     content = document.get(k)
                     if content is not None:
-                        content = NEWLINE.sub(" ", content)
                         try:
                             ingestctl.push(
                                 self.site, k, str(n),
-                                content,
+                                quote_text(content),
                                 self.lang)
                         except Exception:
                             raise
