@@ -1,11 +1,12 @@
 """
 Ingest stuff to sonic daemon.
 
-It ingests an iterator of dictionnaries, stores some values, index others values.
+It ingests an iterator of dictionnaries, stores some values,
+index others values.
 """
 import re
 
-from collection import CollectionSerializer
+from .collection import CollectionSerializer
 
 from sonic import IngestClient, ControlClient
 
@@ -45,14 +46,20 @@ class Ingestor:
                 for k in self.indexed:
                     content = document.get(k)
                     if content is not None:
+                        content = NEWLINE.sub(" ", content)
+                        print(content)
                         try:
-                            ingestctl.push(self.site, k, str(n),
-                                           NEWLINE.sub(" ", content),
-                                           self.lang)
+                            ingestctl.push(
+                                self.site, k, str(n),
+                                content,
+                                self.lang)
                         except Exception as e:
+                            raise
                             print(e, document)
+                        else:
+                            n += 1
             self.collection.close()
 
-        with ControlClient(self.address, self.port, self.password) as controlcl:
-            assert controlcl.ping()
-            controlcl.trigger("consolidate")
+        with ControlClient(self.address, self.port, self.password) as ctl:
+            assert ctl.ping()
+            ctl.trigger("consolidate")
