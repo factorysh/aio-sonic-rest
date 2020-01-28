@@ -12,6 +12,7 @@ venv/lib/python${PYTHON_VERSION}/site-packages/asonic/__init__.py: venv/bin/pyth
 
 
 sonic:
+	mkdir -p data/store
 	docker-compose up -d
 
 down:
