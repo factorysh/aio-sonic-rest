@@ -47,18 +47,16 @@ class Ingestor:
                     content = document.get(k)
                     if content is not None:
                         content = NEWLINE.sub(" ", content)
-                        print(content)
                         try:
                             ingestctl.push(
                                 self.site, k, str(n),
                                 content,
                                 self.lang)
-                        except Exception as e:
+                        except Exception:
                             raise
-                            print(e, document)
                         else:
                             n += 1
-            self.collection.close()
+        self.collection.close()
 
         with ControlClient(self.address, self.port, self.password) as ctl:
             assert ctl.ping()
