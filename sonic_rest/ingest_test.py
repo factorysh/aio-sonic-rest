@@ -7,6 +7,7 @@ def test_ingest():
         dict(name="alice", body="Elle a mangé des carottes."),
     ]
     i = Ingestor(password="iuNg5Ri6daik2fe2Phoo6aig", path="./data/store/collection")
+    i.reset()
     i.ingest(documents)
 
 

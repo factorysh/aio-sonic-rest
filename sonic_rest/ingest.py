@@ -30,6 +30,12 @@ class Ingestor:
         self.password = password
         self.collection = CollectionSerializer(path)
 
+    def reset(self):
+        with IngestClient(self.address, self.port, self.password) as ingestctl:
+            assert ingestctl.ping()
+            ingestctl.flush_collection(self.site)
+        self.collection.reset()
+
     def ingest(self, documents):
         with IngestClient(self.address, self.port, self.password) as ingestctl:
             assert ingestctl.ping()
