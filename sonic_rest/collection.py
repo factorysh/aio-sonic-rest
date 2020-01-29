@@ -18,25 +18,35 @@ from mmap import mmap
 
 
 class CollectionWriter:
-    _data_w = None
-    _idx_w = None
-    _poz = 0
 
-    def __init__(self, path):
-        self.path = path
+    def __init__(self, path, mode=0o777):
+        if isinstance(path, Path):
+            self.path = path
+        else:
+            self.path = Path(path)
+        self.mode = mode
+        self._start()
 
-    def mkdir(self, mode=0o777):
-        Path(self.path).mkdir(mode=mode, parents=True, exist_ok=True)
+    def reset(self):
+        self.close()
+        (self.path / "index").unlink()
+        (self.path / "data").unlink()
+        self._start()
 
-    def data_w(self):
-        if self._data_w is None:
-            self._data_w = (Path(self.path) / "data").open("wb")
-        return self._data_w
-
-    def idx_w(self):
-        if self._idx_w is None:
-            self._idx_w = (Path(self.path) / "index").open("wb")
-        return self._idx_w
+    def _start(self):
+        self.path.mkdir(mode=self.mode, parents=True, exist_ok=True)
+        p = self.path / "index"
+        self._poz = 0
+        if p.exists():
+            self._len = int(p.stat().st_size / 8)
+            if self._len > 0:
+                with p.open("r+b") as i:
+                    m = mmap(i.fileno(), 0)
+                    _, self._poz = struct.unpack("!II", m[-8:])
+        else:
+            self._len = 0
+        self._idx_w = p.open("ab")
+        self._data_w = (self.path / "data").open("ab")
 
     def __enter__(self):
         return self
@@ -44,15 +54,22 @@ class CollectionWriter:
     def __exit__(self, exc_type, exc_value, traceback):
         self.close()
 
+    def __len__(self):
+        return self._len
+
+    def flush(self):
+        self._data_w.flush()
+        self._idx_w.flush()
+
     def close(self):
-        if self._data_w is not None:
-            self._data_w.close()
-        if self._idx_w is not None:
-            self._idx_w.close()
+        self.flush()
+        self._data_w.close()
+        self._idx_w.close()
 
     def write(self, raw: bytes):
-        self.data_w().write(raw)
-        self.idx_w().write(struct.pack("!II", self._poz, self._poz + len(raw)))
+        self._data_w.write(raw)
+        self._idx_w.write(struct.pack("!II", self._poz, self._poz + len(raw)))
+        self._len += 1
         self._poz += len(raw)
 
 
@@ -69,7 +86,7 @@ class CollectionSerializer(CollectionWriter):
 
 class CollectionReader:
     def __init__(self, path):
-        self._len = (Path(path) / "index").stat().st_size / 8
+        self._len = int((Path(path) / "index").stat().st_size / 8)
         self._idx_o = open(Path(path) / "index", "r+b")
         self._idx = mmap(self._idx_o.fileno(), 0)
         self._data_o = open(Path(path) / "data", "r+b")
