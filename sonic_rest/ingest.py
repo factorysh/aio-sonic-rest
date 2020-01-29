@@ -55,14 +55,21 @@ class Ingestor:
                 for k in self.indexed:
                     content = document.get(k)
                     if content is not None:
+                        content = content.replace("[", " ").replace("]", " ").replace('"', '')
+                        content = quote_text(content)
+                        if len(content) > 4096:
+                            continue
                         try:
                             p = ingestctl.push(
                                 self.site, k, str(n),
-                                quote_text(content),
+                                content,
                                 self.lang)
                             if not p:
-                                print("Oups: %s" % quote_text(content))
-                        except Exception:
+                                print("Oups: %s" % content)
+                        except Exception as e:
+                            print(type(content))
+                            print(content)
+                            print(e)
                             self.collection.close()
                             raise
                         else:
