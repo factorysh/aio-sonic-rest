@@ -24,14 +24,11 @@ class Ingestor:
         port=1491,
         password=None,
         path="./data/kv",
-        mkdir=True,
     ):
         self.address = address
         self.port = port
         self.password = password
         self.collection = CollectionSerializer(path)
-        if mkdir:
-            self.collection.mkdir()
 
     def ingest(self, documents):
         with IngestClient(self.address, self.port, self.password) as ingestctl:
