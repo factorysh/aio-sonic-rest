@@ -36,6 +36,13 @@ class Ingestor:
             ingestctl.flush_collection(self.site)
         self.collection.reset()
 
+    def close(self):
+        self.collection.close()
+
+    def ping(self):
+        with IngestClient(self.address, self.port, self.password) as ingestctl:
+            assert ingestctl.ping()
+
     def ingest(self, documents):
         with IngestClient(self.address, self.port, self.password) as ingestctl:
             assert ingestctl.ping()
@@ -49,11 +56,14 @@ class Ingestor:
                     content = document.get(k)
                     if content is not None:
                         try:
-                            ingestctl.push(
+                            p = ingestctl.push(
                                 self.site, k, str(n),
                                 quote_text(content),
                                 self.lang)
+                            if not p:
+                                print("Oups: %s" % quote_text(content))
                         except Exception:
+                            self.collection.close()
                             raise
                         else:
                             n += 1

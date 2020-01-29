@@ -47,6 +47,7 @@ class CollectionWriter:
             self._len = 0
         self._idx_w = p.open("ab")
         self._data_w = (self.path / "data").open("ab")
+        self._closed = False
 
     def __enter__(self):
         return self
@@ -65,8 +66,11 @@ class CollectionWriter:
         self.flush()
         self._data_w.close()
         self._idx_w.close()
+        self._closed = True
 
     def write(self, raw: bytes):
+        if self._closed:
+            raise Exception("Collection is closed")
         self._data_w.write(raw)
         self._idx_w.write(struct.pack("!II", self._poz, self._poz + len(raw)))
         self._len += 1
