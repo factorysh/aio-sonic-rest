@@ -67,7 +67,6 @@ class Ingestor:
                             raise
                         else:
                             n += 1
-        self.collection.close()
 
         with ControlClient(self.address, self.port, self.password) as ctl:
             assert ctl.ping()
