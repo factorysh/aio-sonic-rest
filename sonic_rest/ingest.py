@@ -29,6 +29,7 @@ class Ingestor:
         self.port = port
         self.password = password
         self.collection = CollectionSerializer(path)
+        self.translate = trans()
 
     def reset(self):
         with IngestClient(self.address, self.port, self.password) as ingestctl:
@@ -55,6 +56,7 @@ class Ingestor:
                 for k in self.indexed:
                     content = document.get(k)
                     if content is not None:
+                        content = content.translate(self.translate)
                         for chunk in split(content, 2048):
                             try:
                                 p = ingestctl.push(
@@ -75,5 +77,22 @@ class Ingestor:
 
 def split(txt: str, size:int=1024):
     "split a text in chunks"
-    for i in range(0, len(txt), size):
-        yield txt[i:i+size]
+    poz = 0
+    while poz < len(txt):
+        chunk = txt[poz:poz+size]
+        if len(chunk) < size:
+            yield chunk
+            return
+        if txt[poz+size-1] != " " and txt[poz+size] != " ":
+            x = chunk.rfind(" ")
+            if x != -1:
+                poz += x
+                yield chunk[:x]
+                continue
+        poz += size
+        yield chunk
+
+
+def trans():
+    return str.maketrans(dict(
+        (a, " ") for a in "[]{}(),?!;.:\n\r\t`'\"=><#|"))
