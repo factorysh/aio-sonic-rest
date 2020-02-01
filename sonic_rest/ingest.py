@@ -78,3 +78,9 @@ class Ingestor:
         with ControlClient(self.address, self.port, self.password) as ctl:
             assert ctl.ping()
             ctl.trigger("consolidate")
+
+
+def split(txt: str, size:int=1024):
+    "split a text in chunks"
+    for i in range(0, len(txt), size):
+        yield txt[i:i+size]

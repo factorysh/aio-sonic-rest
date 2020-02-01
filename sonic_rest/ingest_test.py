@@ -1,4 +1,4 @@
-from .ingest import Ingestor
+from .ingest import Ingestor, split
 
 
 def test_ingest():
@@ -10,6 +10,12 @@ def test_ingest():
     i.reset()
     i.ingest(documents)
 
+
+def test_split():
+    groups = list(split("Je mange des carottes", 5))
+    assert len(groups) == 5
+    groups = list(split("Je mange des carottes", 2048))
+    assert len(groups) == 1
 
 if __name__ == "__main__":
     test_ingest()
