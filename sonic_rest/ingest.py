@@ -55,25 +55,18 @@ class Ingestor:
                 for k in self.indexed:
                     content = document.get(k)
                     if content is not None:
-                        content = content.replace("[", " ").replace("]", " ").replace('"', '')
-                        content = quote_text(content)
-                        if len(content) > 4096:
-                            continue
-                        try:
-                            p = ingestctl.push(
-                                self.site, k, str(n),
-                                content,
-                                self.lang)
-                            if not p:
-                                print("Oups: %s" % content)
-                        except Exception as e:
-                            print(type(content))
-                            print(content)
-                            print(e)
-                            self.collection.close()
-                            raise
-                        else:
-                            n += 1
+                        for chunk in split(content, 2048):
+                            try:
+                                p = ingestctl.push(
+                                    self.site, k, str(n),
+                                    chunk,
+                                    self.lang)
+                                if not p:
+                                    print("Oups: %s" % chunk)
+                            except Exception as e:
+                                self.collection.close()
+                                raise
+                        n += 1
 
         with ControlClient(self.address, self.port, self.password) as ctl:
             assert ctl.ping()
