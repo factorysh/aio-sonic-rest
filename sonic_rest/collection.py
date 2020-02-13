@@ -1,6 +1,6 @@
 """
-Ordered collection of bytes for write once, read many, from any number of process.
-It uses two files and mmap.
+Ordered collection of bytes for write once, read many, from any number of
+process.  It uses two files and mmap.
 
 "data" file is the concatenation of values (some bytes).
 
@@ -90,10 +90,11 @@ class CollectionSerializer(CollectionWriter):
 
 class CollectionReader:
     def __init__(self, path):
-        self._len = int((Path(path) / "index").stat().st_size / 8)
-        self._idx_o = open(Path(path) / "index", "r+b")
+        path = Path(path)
+        self._len = int((path / "index").stat().st_size / 8)
+        self._idx_o = open(str(path / "index"), "r+b")
         self._idx = mmap(self._idx_o.fileno(), 0)
-        self._data_o = open(Path(path) / "data", "r+b")
+        self._data_o = open(str(path / "data"), "r+b")
         self._data = mmap(self._data_o.fileno(), 0)
 
     def __enter__(self):
@@ -116,5 +117,8 @@ class CollectionReader:
             raise IndexError()
         if index < 0:
             index = self._len - index
-        start, end = struct.unpack("!II", self._idx[index * 8 : index * 8 + 8])
+        start, end = struct.unpack(
+            "!II",
+            self._idx[index * 8: index * 8 + 8]
+        )
         return self._data[start:end]
