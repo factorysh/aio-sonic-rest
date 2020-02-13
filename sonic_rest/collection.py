@@ -112,9 +112,9 @@ class CollectionReader:
 
     def __getitem__(self, index):
         if type(index) != int:
-            raise TypeError()
+            raise TypeError("index must be an int")
         if index >= self._len:
-            raise IndexError()
+            raise IndexError("index does no exists")
         if index < 0:
             index = self._len - index
         start, end = struct.unpack(
