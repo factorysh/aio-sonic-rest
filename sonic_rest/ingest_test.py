@@ -17,6 +17,3 @@ def test_split():
     assert len(groups) == 5
     groups = list(split("Je mange des carottes", 2048))
     assert len(groups) == 1
-
-if __name__ == "__main__":
-    test_ingest()
