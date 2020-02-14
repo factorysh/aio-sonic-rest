@@ -19,11 +19,7 @@ class Ingestor:
     lang = "fra"
 
     def __init__(
-        self,
-        address="127.0.0.1",
-        port=1491,
-        password=None,
-        path="./data/kv",
+        self, address="127.0.0.1", port=1491, password=None, path="./data/kv",
     ):
         self.address = address
         self.port = port
@@ -60,9 +56,8 @@ class Ingestor:
                         for chunk in split(content, 2048):
                             try:
                                 p = ingestctl.push(
-                                    self.site, k, str(n),
-                                    chunk,
-                                    self.lang)
+                                    self.site, k, str(n), chunk, self.lang
+                                )
                                 if not p:
                                     print("Oups: %s" % chunk)
                             except Exception as e:
@@ -75,17 +70,20 @@ class Ingestor:
             ctl.trigger("consolidate")
 
 
-def split(txt: str, size:int=1024):
+def split(txt: str, size: int = 1024):
     "split a text in chunks"
     poz = 0
     while poz < len(txt):
-        chunk = txt[poz:poz+size]
-        if len(chunk) < size:
+        chunk = txt[poz : poz + size]
+        if len(chunk) < size:  # last token
             yield chunk
             return
-        if txt[poz+size-1] != " " and txt[poz+size] != " ":
+        if txt[poz + size - 1] != " " and txt[poz + size] != " ":
             x = chunk.rfind(" ")
-            if x != -1:
+            if x == 0:
+                poz += 1
+                continue
+            if x != -1: # there is a space to split
                 poz += x
                 yield chunk[:x]
                 continue
@@ -94,5 +92,4 @@ def split(txt: str, size:int=1024):
 
 
 def trans():
-    return str.maketrans(dict(
-        (a, " ") for a in "[]{}(),?!;.:\n\r\t`'\"=><#|"))
+    return str.maketrans(dict((a, " ") for a in "[]{}(),?!;.:\n\r\t`'\"=><#|"))
