@@ -52,6 +52,8 @@ class Ingestor:
                 for k in self.indexed:
                     content = document.get(k)
                     if content is not None:
+                        if isinstance(content, list):
+                            content = " ".join(content)
                         content = content.translate(self.translate)
                         for chunk in split(content, 2048):
                             try:
