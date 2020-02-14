@@ -7,8 +7,9 @@ from .search import Search
 @pytest.fixture
 async def app():
     app = web.Application()
-    await Search(app, password="iuNg5Ri6daik2fe2Phoo6aig",
-                 store="./data/store/collection")
+    await Search(
+        app, password="iuNg5Ri6daik2fe2Phoo6aig", store="./data/store/collection"
+    )
     return app
 
 
