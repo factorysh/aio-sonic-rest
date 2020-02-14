@@ -13,14 +13,27 @@ from sonic.client import quote_text
 
 
 class Ingestor:
-    indexed = ["body"]
-    stored = ["name"]
     site = "site"
-    lang = "fra"
 
     def __init__(
-        self, address="127.0.0.1", port=1491, password=None, path="./data/kv",
+        self,
+        address="127.0.0.1",
+        port=1491,
+        password=None,
+        path="./data/kv",
+        indexed=None,
+        stored=None,
+        lang="fra",
     ):
+        if indexed is None:
+            self.indexed = ["body"]
+        else:
+            self.indexed = indexed
+        if stored is None:
+            self.stored = ["name"]
+        else:
+            self.stored = stored
+        self.lang = lang
         self.address = address
         self.port = port
         self.password = password
@@ -85,7 +98,7 @@ def split(txt: str, size: int = 1024):
             if x == 0:
                 poz += 1
                 continue
-            if x != -1: # there is a space to split
+            if x != -1:  # there is a space to split
                 poz += x
                 yield chunk[:x]
                 continue
