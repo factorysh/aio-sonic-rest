@@ -78,7 +78,7 @@ class Ingestor:
                                 self.collection.close()
                                 raise
                         n += 1
-
+        self.collection.flush()
         with ControlClient(self.address, self.port, self.password) as ctl:
             assert ctl.ping()
             ctl.trigger("consolidate")
