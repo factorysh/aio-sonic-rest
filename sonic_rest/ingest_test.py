@@ -2,13 +2,13 @@ from .ingest import Ingestor, split
 
 
 def test_ingest():
-    documents = [
-        dict(name="bob", body="Il fait beau et chaud."),
-        dict(name="alice", body="Elle a mangé des carottes."),
-    ]
     i = Ingestor(password="iuNg5Ri6daik2fe2Phoo6aig", path="./data/store/collection")
     i.ping()
     i.reset()
+    documents = [
+        dict(name="bob", body="Il fait beau et chaud.", tags=["beau", "chaud"]),
+        dict(name="alice", body="Elle a mangé des carottes.", tags=["carotte"]),
+    ]
     i.ingest(documents)
 
 
