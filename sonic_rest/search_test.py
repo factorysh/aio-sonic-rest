@@ -2,10 +2,17 @@ import pytest
 from aiohttp import web
 
 from .search import Search
+from .ingest import Ingestor
 
 
 @pytest.fixture
 async def app():
+    i = Ingestor(password="iuNg5Ri6daik2fe2Phoo6aig", path="./data/store/collection")
+    i.reset()
+    documents = [
+        dict(name="alice", body="Elle a mangé des carottes.", tags=["carotte"]),
+    ]
+    i.ingest(documents)
     app = web.Application()
     await Search(
         app, password="iuNg5Ri6daik2fe2Phoo6aig", store="./data/store/collection"
