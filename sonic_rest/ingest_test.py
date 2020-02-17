@@ -2,7 +2,16 @@ from .ingest import Ingestor, split
 
 
 def test_ingest():
-    i = Ingestor(password="iuNg5Ri6daik2fe2Phoo6aig", path="./data/store/collection")
+    i = Ingestor(dict(
+        name=dict(
+            stored=True),
+        body=dict(
+            indexed=True),
+        tags=dict(
+            stored=True,
+            indexed=True,
+        )
+    ), password="iuNg5Ri6daik2fe2Phoo6aig", path="./data/store/collection")
     i.ping()
     i.reset()
     documents = [

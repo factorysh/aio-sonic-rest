@@ -12,23 +12,29 @@ from .collection import CollectionReader
 
 
 async def query(request):
-    r = await request.app["sonic"].query(
-        request.app["site"],
-        request.query.get("bucket", "body"),
-        request.query.get("q", ""),
-    )
     resp = web.StreamResponse(
         status=200, reason="OK", headers={"Content-Type": "application/json"}
     )
     await resp.prepare(request)
     await resp.write(b"[")
-    i = 1
-    for id in r:
-        await resp.write(request.app["collection"][int(id)])
-        if i < len(r):
+    already = set()
+    for field in request.app["fields"]:
+        r = await request.app["sonic"].query(
+            request.app["site"],
+            field,
+            request.query.get("q", ""),
+        )
+        ids = [int(id) for id in r if int(id) not in already]
+        if len(ids) == 0:
+            continue
+        if len(already) > 0:
             await resp.write(b",")
-        i += 1
-        await resp.drain()
+        already = already.union(ids)
+        for i, id in enumerate(ids):
+            await resp.write(request.app["collection"][id])
+            if i+1 < len(ids):
+                await resp.write(b",")
+            await resp.drain()
     await resp.write(b"]")
     return resp
 
@@ -49,5 +55,6 @@ async def Search(
     app["sonic"] = Client(host=host, port=port, password=password, max_connections=100)
     await app["sonic"].channel(Channels.SEARCH.value)
     app["site"] = site
+    app["fields"] = ["tags", "body"]
     app["collection"] = CollectionReader(store)
     app.add_routes([web.get("/query", query), web.get("/suggest", suggest)])

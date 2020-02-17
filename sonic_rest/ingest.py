@@ -16,27 +16,20 @@ class Ingestor:
 
     def __init__(
         self,
+        model,
         address="127.0.0.1",
         port=1491,
         password=None,
         path="./data/kv",
-        indexed=None,
-        stored=None,
         lang="fra",
     ):
-        if indexed is None:
-            self.indexed = ["body"]
-        else:
-            self.indexed = indexed
-        if stored is None:
-            self.stored = ["name"]
-        else:
-            self.stored = stored
         self.lang = lang
         self.address = address
         self.port = port
         self.password = password
         self.collection = CollectionSerializer(path)
+        self.stored = set(k for k, v in model.items() if v.get('stored'))
+        self.indexed= set(k for k, v in model.items() if v.get('indexed'))
         self.translate = trans()
 
     def reset(self):
@@ -55,8 +48,7 @@ class Ingestor:
     def ingest(self, documents):
         with IngestClient(self.address, self.port, self.password) as ingestctl:
             assert ingestctl.ping()
-            n = 0
-            for document in documents:
+            for n, document in enumerate(documents):
                 d = dict()
                 for k in self.stored:
                     d[k] = document.get(k)
@@ -77,7 +69,6 @@ class Ingestor:
                             except Exception as e:
                                 self.collection.close()
                                 raise
-                        n += 1
         self.collection.flush()
         with ControlClient(self.address, self.port, self.password) as ctl:
             assert ctl.ping()
