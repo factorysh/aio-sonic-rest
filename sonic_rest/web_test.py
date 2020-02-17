@@ -1,7 +1,7 @@
 import pytest
 from aiohttp import web
 
-from .search import Search
+from .web import Search
 from .ingest import Ingestor
 
 
