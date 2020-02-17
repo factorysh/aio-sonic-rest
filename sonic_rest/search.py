@@ -43,10 +43,16 @@ async def suggest(request):
     s = request.query.get("s")
     if s is None:
         return web.json_response([])
-    r = await request.app["sonic"].suggest(
-        request.app["site"], request.query.get("bucket", "body"), s, 5
-    )
-    return web.json_response([j.decode("utf8") for j in r])
+    already = set()
+    suggestions = list()
+    for field in request.app["fields"]:
+        r = await request.app["sonic"].suggest(
+            request.app["site"], field, s, 5
+        )
+        suggestions += [a for a in r if a not in already]
+        already = already.union(r)
+
+    return web.json_response([j.decode("utf8") for j in suggestions])
 
 
 async def Search(

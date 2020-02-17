@@ -46,5 +46,6 @@ async def test_suggest(aiohttp_client, app, loop):
     assert resp.status == 200
     j = await resp.json()
     print(j)
-    assert len(j) == 1
-    assert j[0] == "carottes"
+    assert len(j) == 2
+    assert "carottes" in j
+    assert "carotte" in j
