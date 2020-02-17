@@ -26,8 +26,6 @@ def search():
 
 
 async def test_search(search):
-    i = 0
-    async for r in search.search("python", ["tags", "body"]):
-        if i == 0:
-            assert r["name"] == "bob"
-        i += 1
+    size, results = await search.search("python", ["tags", "body"])
+    assert size == 2
+    assert results.__next__()["name"] == "bob"

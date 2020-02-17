@@ -1,4 +1,5 @@
 import json
+from asyncio import ensure_future, gather
 
 from asonic import Client
 from asonic.enums import Channels
@@ -16,17 +17,20 @@ class Search:
 
     async def search_naked(self, query, fields):
         await self.client.channel(Channels.SEARCH.value)
-        already = set()
+        futures = dict()
         for field in fields:
-            r = await self.client.query(self.site, field, query,)
-            ids = [int(id) for id in r if int(id) not in already]
+            futures[field] = ensure_future(self.client.query(self.site, field, query))
+        await gather(*futures.values())
+        already = set()
+        results = list()
+        for field in fields:
+            ids = [int(id) for id in futures[field].result() if int(id) not in already]
             if len(ids) == 0:
                 continue
             already = already.union(ids)
-            for i, id in enumerate(ids):
-                # yield raw document, is the last element of the list ?
-                yield self.collection[id], i + 1 < len(ids)
+            results += ids
+        return len(results), (self.collection[id] for id in results)
 
     async def search(self, query, fields):
-        async for r in self.search_naked(query, fields):
-            yield json.loads(r[0])
+        size, results = await self.search_naked(query, fields)
+        return size, (json.loads(r) for r in results)
