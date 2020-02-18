@@ -25,7 +25,7 @@ test: install
 	make down
 	rm -rf data
 	make sonic
-	venv/bin/pytest
+	venv/bin/pytest --cov=sonic_rest
 
 clean:
 	rm -rf data venv
