@@ -34,7 +34,7 @@ Search
 
 ```python
 s = Search("./data/store/collection", password="iuNg5Ri6daik2fe2Phoo6aig")
-size, results = await search.search("python", ["tags", "body"])
+size, results = await s.search("python", ["tags", "body"])
 ```
 
 Rest it
