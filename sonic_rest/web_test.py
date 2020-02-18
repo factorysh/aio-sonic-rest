@@ -1,22 +1,22 @@
 import pytest
 from aiohttp import web
 
-from .web import Search
+from .web import sonic_rest
+from .search import Search
 from .ingest import Ingestor
 
 
 @pytest.fixture
 async def app():
-    i = Ingestor(dict(
-        name=dict(
-            stored=True),
-        body=dict(
-            indexed=True),
-        tags=dict(
-            stored=True,
-            indexed=True,
-        )
-    ), password="iuNg5Ri6daik2fe2Phoo6aig", path="./data/store/collection")
+    i = Ingestor(
+        dict(
+            name=dict(stored=True),
+            body=dict(indexed=True),
+            tags=dict(stored=True, indexed=True,),
+        ),
+        password="iuNg5Ri6daik2fe2Phoo6aig",
+        path="./data/store/collection",
+    )
     i.reset()
     documents = [
         dict(name="alice", body="Elle a mangé des carottes.", tags=["carotte"]),
@@ -25,8 +25,8 @@ async def app():
     ]
     i.ingest(documents)
     app = web.Application()
-    await Search(
-        app, password="iuNg5Ri6daik2fe2Phoo6aig", store="./data/store/collection"
+    await sonic_rest(
+        app, Search("./data/store/collection", password="iuNg5Ri6daik2fe2Phoo6aig")
     )
     return app
 
