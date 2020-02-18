@@ -2,7 +2,7 @@ import json
 from asyncio import ensure_future, gather
 
 from asonic import Client
-from asonic.enums import Channels
+from asonic.enums import Channel
 
 from .collection import CollectionReader
 
@@ -16,7 +16,7 @@ class Search:
         self.collection = CollectionReader(store)
 
     async def search_naked(self, query, fields):
-        await self.client.channel(Channels.SEARCH.value)
+        await self.client.channel(Channel.SEARCH.value)
         futures = dict()
         for field in fields:
             futures[field] = ensure_future(self.client.query(self.site, field, query))
@@ -36,7 +36,7 @@ class Search:
         return size, (json.loads(r) for r in results)
 
     async def suggest(self, query, fields):
-        await self.client.channel(Channels.SEARCH.value)
+        await self.client.channel(Channel.SEARCH.value)
         futures = dict()
         for field in fields:
             futures[field] = ensure_future(

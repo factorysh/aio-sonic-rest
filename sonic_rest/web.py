@@ -6,7 +6,6 @@ Query return stored documents, already serialized.
 """
 from aiohttp import web
 from asonic import Client
-from asonic.enums import Channels
 
 from .collection import CollectionReader
 from .search import Search
@@ -38,7 +37,7 @@ async def suggest(request):
     return web.json_response([j.decode("utf8") for j in suggestions])
 
 
-async def sonic_rest(app, search):
+def sonic_rest(app, search):
     app["search"] = search
     app["fields"] = ["tags", "body"]
     app.add_routes([web.get("/query", query), web.get("/suggest", suggest)])
