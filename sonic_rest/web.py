@@ -37,7 +37,10 @@ async def suggest(request):
     return web.json_response([j.decode("utf8") for j in suggestions])
 
 
-def sonic_rest(app, search):
+def sonic_rest(app, search, root="/"):
     app["search"] = search
     app["fields"] = ["tags", "body"]
-    app.add_routes([web.get("/query", query), web.get("/suggest", suggest)])
+    app.add_routes([
+        web.get("%squery" % root, query),
+        web.get("%ssuggest" % root, suggest),
+    ])
