@@ -25,7 +25,7 @@ async def app():
     ]
     i.ingest(documents)
     app = web.Application()
-    await sonic_rest(
+    sonic_rest(
         app, Search("./data/store/collection", password="iuNg5Ri6daik2fe2Phoo6aig")
     )
     return app

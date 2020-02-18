@@ -40,7 +40,7 @@ size, results = await s.search("python", ["tags", "body"])
 Rest it
 ```python
 app = web.Application()
-await sonic_rest(app, s)
+sonic_rest(app, s)
 ```
 
 Query it
