@@ -25,22 +25,17 @@ class Search:
 
     async def search_naked(self, query, fields):
         await self.set_search_channel()
-        futures = dict()
-        for field in fields:
-            futures[field] = ensure_future(
-                self.client.query(self.site, field, query))
+        futures = {
+            field: ensure_future(self.client.query(self.site, field, query))
+            for field in fields
+        }
         await gather(*futures.values())
-        already = set()
         results = list()
         for field in fields:
-            ids = [
+            results.extend([
                 int(id) for id in futures[field].result()
-                if int(id) not in already
-            ]
-            if len(ids) == 0:
-                continue
-            already = already.union(ids)
-            results += ids
+                if int(id) not in results
+            ])
         return len(results), (self.collection[id] for id in results)
 
     async def search(self, query, fields):
@@ -50,17 +45,16 @@ class Search:
     async def suggest(self, query, fields):
         await self.set_search_channel()
         futures = dict()
-        for field in fields:
-            futures[field] = ensure_future(
-                self.client.suggest(self.site, field, query, 5)
-            )
+        futures = {
+            field: ensure_future(
+                self.client.suggest(self.site, field, query, 5))
+            for field in fields
+        }
         await gather(*futures.values())
-        already = set()
         suggestions = list()
         for field in fields:
-            suggestions += [
+            suggestions.extend([
                 a for a in futures[field].result()
-                if a not in already
-            ]
-            already = already.union(suggestions)
+                if a not in suggestions
+            ])
         return suggestions
