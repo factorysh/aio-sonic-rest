@@ -10,6 +10,8 @@ venv/bin/python:
 venv/lib/python${PYTHON_VERSION}/site-packages/asonic/__init__.py: venv/bin/python
 	venv/bin/pip install .[tests]
 
+build:
+	docker build -t bearstech/sonic .
 
 sonic:
 	mkdir -p data/store
@@ -21,7 +23,7 @@ down:
 ps:
 	docker-compose ps
 
-test: install
+test: build install
 	make down
 	rm -rf data
 	make sonic
