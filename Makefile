@@ -19,6 +19,7 @@ build: pull
 	docker build \
 		$(DOCKER_BUILD_ARGS) \
 		-t bearstech/sonic:latest .
+	docker tag bearstech/sonic:latest bearstech/sonic:$(shell docker run bearstech/sonic:latest /usr/local/bin/sonic -V | cut -d' ' -f2)
 
 push: build
 	docker push bearstech/sonic:latest
