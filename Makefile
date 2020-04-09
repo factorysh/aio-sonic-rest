@@ -23,6 +23,7 @@ build: pull
 
 push: build
 	docker push bearstech/sonic:latest
+	docker push bearstech/sonic:$(shell docker run bearstech/sonic:latest /usr/local/bin/sonic -V | cut -d' ' -f2)
 
 sonic:
 	mkdir -p data/store
