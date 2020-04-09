@@ -1,3 +1,5 @@
+include Makefile.build_args
+
 PYTHON_VERSION = $(shell python3 -V | cut -d ' ' -f 2 - | cut -d '.' -f 1,2 -)
 
 
@@ -10,8 +12,16 @@ venv/bin/python:
 venv/lib/python${PYTHON_VERSION}/site-packages/asonic/__init__.py: venv/bin/python
 	venv/bin/pip install .[tests]
 
-build:
-	docker build -t bearstech/sonic .
+pull:
+	docker pull bearstech/debian:buster
+
+build: pull
+	docker build \
+		$(DOCKER_BUILD_ARGS) \
+		-t bearstech/sonic:latest .
+
+push: build
+	docker push bearstech/sonic:latest
 
 sonic:
 	mkdir -p data/store

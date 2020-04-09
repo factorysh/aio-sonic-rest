@@ -1,4 +1,4 @@
-FROM bearstech/debian-dev:buster
+FROM bearstech/debian-dev:buster as build
 
 ENV RUSTUP_HOME=/usr/local/rustup \
     CARGO_HOME=/usr/local/cargo \
@@ -20,10 +20,24 @@ RUN set -eux \
     && cargo --version \
     && rustc --version \
     && cargo install sonic-server \
-    && strip /usr/local/cargo/bin/sonic \
-    && mv /usr/local/cargo/bin/sonic /usr/local/bin/sonic \
-    && rm -rf /var/lib/apt/lists/*
+    && strip /usr/local/cargo/bin/sonic
 
-CMD [ "sonic", "-c", "/etc/sonic.cfg" ]
+FROM bearstech/debian-dev:buster
+
+COPY --from=build /usr/local/cargo/bin/sonic /usr/local/bin/sonic
+
+CMD [ "/usr/local/bin/sonic", "-c", "/etc/sonic.cfg" ]
 
 EXPOSE 1491
+
+ARG GIT_VERSION
+ARG GIT_DATE
+ARG BUILD_DATE
+
+LABEL \
+    com.bearstech.image.revision_date=${GIT_DATE} \
+    org.opencontainers.image.authors=Bearstech \
+    org.opencontainers.image.revision=${GIT_VERSION} \
+    org.opencontainers.image.created=${BUILD_DATE} \
+    org.opencontainers.image.url=https://github.com/factorysh/aio-sonic-rest \
+    org.opencontainers.image.source=https://github.com/factorysh/aio-sonic-rest/blob/${GIT_VERSION}/Dockerfile
