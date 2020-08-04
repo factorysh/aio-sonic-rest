@@ -1,5 +1,6 @@
 __pycache__/
 data/
 venv/
-aio_simple_search.egg-info/
+*.egg-info/
 build/
+.coverage
