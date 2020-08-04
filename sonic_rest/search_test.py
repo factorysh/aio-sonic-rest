@@ -29,3 +29,8 @@ async def test_search(search):
     size, results = await search.search("python", ["tags", "body"])
     assert size == 2
     assert results.__next__()["name"] == "bob"
+
+
+async def test_sanitize(search):
+    size, results = await search.search("<<<", ["tags", "body"])
+    assert size == 0
