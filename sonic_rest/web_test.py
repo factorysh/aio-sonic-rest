@@ -41,6 +41,15 @@ async def test_query(aiohttp_client, app, loop):
     assert j[0]["name"] == "bob"
 
 
+async def test_query_broken(aiohttp_client, app, loop):
+    client = await aiohttp_client(app)
+    resp = await client.get("/query?q=<<<")
+    assert resp.status == 200
+    j = await resp.json()
+    j = j['results']
+    assert len(j) == 0
+
+
 async def test_suggest(aiohttp_client, app, loop):
     client = await aiohttp_client(app)
     resp = await client.get("/suggest?s=car")
