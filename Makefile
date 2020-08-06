@@ -2,6 +2,7 @@ include Makefile.build_args
 
 PYTHON_VERSION = $(shell python3 -V | cut -d ' ' -f 2 - | cut -d '.' -f 1,2 -)
 
+SONIC_VERSION=1.3.0
 
 install: venv/lib/python${PYTHON_VERSION}/site-packages/asonic/__init__.py
 
@@ -18,6 +19,7 @@ pull:
 build: pull
 	docker build \
 		$(DOCKER_BUILD_ARGS) \
+		--build-arg VERSION=${SONIC_VERSION} \
 		-t bearstech/sonic:latest .
 	docker tag bearstech/sonic:latest bearstech/sonic:$(shell docker run bearstech/sonic:latest /usr/local/bin/sonic -V | cut -d' ' -f2)
 

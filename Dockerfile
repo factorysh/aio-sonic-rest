@@ -1,5 +1,7 @@
 FROM bearstech/debian-dev:buster as build
 
+ARG VERSION=1.3.0
+
 ENV RUSTUP_HOME=/usr/local/rustup \
     CARGO_HOME=/usr/local/cargo \
     PATH=/usr/local/cargo/bin:$PATH
@@ -19,7 +21,7 @@ RUN set -eux \
     && rustup --version \
     && cargo --version \
     && rustc --version \
-    && cargo install sonic-server \
+    && cargo install --version ${VERSION} sonic-server \
     && strip /usr/local/cargo/bin/sonic
 
 FROM bearstech/debian-dev:buster
