@@ -47,3 +47,16 @@ def sonic_rest(app, search, fields=['tags', 'body'], root="/"):
         web.get("%squery" % root, query),
         web.get("%ssuggest" % root, suggest),
     ])
+
+
+if __name__ == '__main__':
+    from .search import Search
+    import os
+
+    search = Search(os.getenv('SONIC_STORE', "/tmp/store"),
+                    host=os.getenv('SONIC_HOST', '127.0.0.1'),
+                    password=os.getenv('SONIC_PASSWORD')
+                    )
+    app = web.Application()
+    sonic_rest(app, search)
+    web.run_app(app)

@@ -1,0 +1,29 @@
+FROM bearstech/python-dev:3.7 as build
+
+COPY setup.py /usr/src/
+COPY sonic_rest /usr/src/sonic_rest
+
+WORKDIR /usr/src
+
+RUN mkdir /opt/rest \
+        && python3 -m venv /opt/rest/venv \
+        && /opt/rest/venv/bin/pip install -U pip wheel \
+        && /opt/rest/venv/bin/pip install .
+
+FROM bearstech/python:3.7
+
+COPY --from=build /opt/rest /opt/rest
+
+CMD ["/opt/rest/venv/bin/python3", "-m", "sonic_rest.web"]
+
+ARG GIT_VERSION
+ARG GIT_DATE
+ARG BUILD_DATE
+
+LABEL \
+    com.bearstech.image.revision_date=${GIT_DATE} \
+    org.opencontainers.image.authors=Bearstech \
+    org.opencontainers.image.revision=${GIT_VERSION} \
+    org.opencontainers.image.created=${BUILD_DATE} \
+    org.opencontainers.image.url=https://github.com/factorysh/aio-sonic-rest \
+    org.opencontainers.image.source=https://github.com/factorysh/aio-sonic-rest/blob/${GIT_VERSION}/Dockerfile.rest

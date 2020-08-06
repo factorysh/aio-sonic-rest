@@ -16,12 +16,21 @@ venv/lib/python${PYTHON_VERSION}/site-packages/asonic/__init__.py: venv/bin/pyth
 pull:
 	docker pull bearstech/debian:buster
 
-build: pull
+image-sonic:
 	docker build \
 		$(DOCKER_BUILD_ARGS) \
 		--build-arg VERSION=${SONIC_VERSION} \
 		-t bearstech/sonic:latest .
 	docker tag bearstech/sonic:latest bearstech/sonic:$(shell docker run bearstech/sonic:latest /usr/local/bin/sonic -V | cut -d' ' -f2)
+
+image-rest:
+	docker build \
+		$(DOCKER_BUILD_ARGS) \
+		-t bearstech/aio-sonic-rest:latest \
+		-f Dockerfile.rest \
+		.
+
+build: | pull image-sonic image-rest
 
 push: build
 	docker push bearstech/sonic:latest

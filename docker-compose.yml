@@ -11,3 +11,14 @@ services:
       - ./config.cfg:/etc/sonic.cfg:ro
       - ./data/store:/var/lib/sonic/store/
 
+  rest:
+    image: bearstech/aio-sonic-rest
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data/index:/rest/index
+    depends_on:
+      - sonic
+    environment:
+      SONIC_STORE: /rest
+      HOST: sonic
