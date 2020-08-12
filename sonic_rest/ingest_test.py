@@ -15,8 +15,10 @@ def test_ingest():
     i.ping()
     i.reset()
     documents = [
-        dict(name="bob", body="Il fait beau et chaud.", tags=["beau", "chaud"]),
-        dict(name="alice", body="Elle a mangé des carottes.", tags=["carotte"]),
+        dict(name="bob", body="Il fait beau et chaud.",
+             tags=["beau", "chaud"]),
+        dict(name="alice", body="Elle a mangé des carottes.",
+             tags=["carotte"]),
     ]
     i.ingest(documents)
 

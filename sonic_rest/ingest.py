@@ -29,7 +29,7 @@ class Ingestor:
         self.password = password
         self.collection = CollectionSerializer(path)
         self.stored = set(k for k, v in model.items() if v.get('stored'))
-        self.indexed= set(k for k, v in model.items() if v.get('indexed'))
+        self.indexed = set(k for k, v in model.items() if v.get('indexed'))
         self.translate = trans()
 
     def reset(self):
@@ -79,7 +79,7 @@ def split(txt: str, size: int = 1024):
     "split a text in chunks"
     poz = 0
     while poz < len(txt):
-        chunk = txt[poz : poz + size]
+        chunk = txt[poz: poz + size]
         if len(chunk) < size:  # last token
             yield chunk
             return

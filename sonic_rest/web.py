@@ -34,7 +34,7 @@ async def suggest(request):
     if not query:
         return web.json_response({"error": "no query provided"})
     suggestions = await request.app["search"].suggest(
-            query, request.app["fields"])
+        query, request.app["fields"])
     return web.json_response({
         "results": [j.decode("utf8") for j in suggestions]
     })

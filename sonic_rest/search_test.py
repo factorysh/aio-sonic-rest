@@ -17,7 +17,8 @@ def search():
     )
     i.reset()
     documents = [
-        dict(name="alice", body="Elle a mangé des carottes.", tags=["carotte"]),
+        dict(name="alice", body="Elle a mangé des carottes.",
+             tags=["carotte"]),
         dict(name="bob", body="Il fait du Django.", tags=["python", "django"]),
         dict(name="charly", body="Il a un python dans son vivarium.", tags=[]),
     ]

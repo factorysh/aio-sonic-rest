@@ -116,5 +116,5 @@ class CollectionReader:
             raise IndexError("index does no exists")
         if index < 0:
             index = self._len - index
-        start, end = struct.unpack("!II", self._idx[index * 8 : index * 8 + 8])
+        start, end = struct.unpack("!II", self._idx[index * 8: index * 8 + 8])
         return self._data[start:end]

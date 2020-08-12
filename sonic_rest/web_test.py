@@ -19,14 +19,16 @@ async def app():
     )
     i.reset()
     documents = [
-        dict(name="alice", body="Elle a mangé des carottes.", tags=["carotte"]),
+        dict(name="alice", body="Elle a mangé des carottes.",
+             tags=["carotte"]),
         dict(name="bob", body="Il fait du Django.", tags=["python", "django"]),
         dict(name="charly", body="Il a un python dans son vivarium.", tags=[]),
     ]
     i.ingest(documents)
     app = web.Application()
     sonic_rest(
-        app, Search("./data/store/collection", password="iuNg5Ri6daik2fe2Phoo6aig")
+        app, Search("./data/store/collection",
+                    password="iuNg5Ri6daik2fe2Phoo6aig")
     )
     return app
 
