@@ -89,12 +89,17 @@ class CollectionSerializer(CollectionWriter):
 
 class CollectionReader:
     def __init__(self, path):
-        path = Path(path)
-        self._len = int((path / "index").stat().st_size / 8)
-        self._idx_o = open(str(path / "index"), "r+b")
-        self._idx = mmap(self._idx_o.fileno(), 0)
-        self._data_o = open(str(path / "data"), "r+b")
-        self._data = mmap(self._data_o.fileno(), 0)
+        self.path = Path(path)
+        self._idx_o = None
+        self._data_o = None
+
+    def _lazy_open(self):
+        if self._idx_o is None:
+            self._idx_o = open(str(self.path / "index"), "r+b")
+            self._idx = mmap(self._idx_o.fileno(), 0)
+        if self._data_o is None:
+            self._data_o = open(str(self.path / "data"), "r+b")
+            self._data = mmap(self._data_o.fileno(), 0)
 
     def __enter__(self):
         return self
@@ -107,14 +112,15 @@ class CollectionReader:
         self._data_o.close()
 
     def __len__(self):
-        return self._len
+        return int((self.path / "index").stat().st_size / 8)
 
     def __getitem__(self, index):
-        if type(index) != int:
+        if not isinstance(index, int):
             raise TypeError("index must be an int")
-        if index >= self._len:
+        if index >= len(self):
             raise IndexError("index does no exists")
         if index < 0:
-            index = self._len - index
+            index = len(self) - index
+        self._lazy_open()
         start, end = struct.unpack("!II", self._idx[index * 8: index * 8 + 8])
         return self._data[start:end]
