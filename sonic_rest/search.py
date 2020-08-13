@@ -15,7 +15,8 @@ class Search:
             host=host, port=port, password=password, max_connections=100
         )
         self.site = site
-        self.collection = CollectionReader(store)
+        self.store = store
+        self.collection = CollectionReader(self.store)
         self.channel = None
 
     async def set_search_channel(self):
@@ -36,7 +37,12 @@ class Search:
                 int(id) for id in futures[field].result()
                 if int(id) not in results
             ])
-        return len(results), (self.collection[id] for id in results)
+        try:
+            r = [self.collection[id] for id in results]
+        except Exception as e:
+            self.collection = CollectionReader(self.store)
+            raise e
+        return len(results), r
 
     async def search(self, query, fields):
         size, results = await self.search_naked(query, fields)
