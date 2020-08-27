@@ -37,11 +37,7 @@ class Search:
                 int(id) for id in futures[field].result()
                 if int(id) not in results
             ])
-        try:
-            r = [self.collection[id] for id in results]
-        except Exception as e:
-            self.collection = CollectionReader(self.store)
-            raise e
+        r = [self.collection[id] for id in results]
         return len(results), r
 
     async def search(self, query, fields):

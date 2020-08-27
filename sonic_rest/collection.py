@@ -90,6 +90,7 @@ class CollectionSerializer(CollectionWriter):
 class CollectionReader:
     def __init__(self, path):
         self.path = Path(path)
+        self._stat = None
         self._idx_o = None
         self._data_o = None
 
@@ -108,19 +109,29 @@ class CollectionReader:
         self.close()
 
     def close(self):
-        self._idx_o.close()
-        self._data_o.close()
+        if self._idx_o is not None:
+            self._idx_o.close()
+            self._idx_o = self._idx = None
+        if self._data_o is not None:
+            self._data_o.close()
+            self._data_o = self._data = None
 
     def __len__(self):
-        return int((self.path / "index").stat().st_size / 8)
+        stat = (self.path / "index").stat()
+        _stat = (stat.st_ino, stat.st_mtime)
+        if self._stat != _stat:
+            self.close()
+            self._lazy_open()
+            self._stat = _stat
+        return int(stat.st_size / 8)
 
     def __getitem__(self, index):
         if not isinstance(index, int):
             raise TypeError("index must be an int")
-        if index >= len(self):
+        length = len(self)
+        if index >= length:
             raise IndexError("index does no exists")
         if index < 0:
-            index = len(self) - index
-        self._lazy_open()
+            index = length - index
         start, end = struct.unpack("!II", self._idx[index * 8: index * 8 + 8])
         return self._data[start:end]
